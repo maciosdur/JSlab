@@ -1,10 +1,10 @@
 import sys
 
-def count_paragraphs(input_stream):
+def count_paragraphs():
     paragraph_count = 0
     in_paragraph = False
 
-    for line in input_stream:
+    for line in sys.stdin:
         line = line.strip()
 
         if line == "":
@@ -17,7 +17,7 @@ def count_paragraphs(input_stream):
     if in_paragraph:
         paragraph_count += 1
 
-    print(paragraph_count)
+    return paragraph_count
 
 if __name__ == "__main__":
-    count_paragraphs(sys.stdin)
+    print(count_paragraphs())

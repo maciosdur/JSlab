@@ -1,18 +1,23 @@
 import sys
 
-def first_20_sentences(input_stream):
+def first_20_sentences():
     sentence_count = 0
     current_sentence = ""
+    sentences = []
 
-    for line in input_stream:
+    for line in sys.stdin:
         for char in line:
             current_sentence += char
             if char in ".!?":
                 sentence_count += 1
-                print(current_sentence.strip())  
-                current_sentence = "" 
+                sentences.append(current_sentence.strip())
+                current_sentence = ""
                 if sentence_count >= 20:
-                    return
+                    return sentences
+
+    return sentences
 
 if __name__ == "__main__":
-    first_20_sentences(sys.stdin)
+    result = first_20_sentences()
+    for sentence in result:
+        print(sentence)

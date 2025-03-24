@@ -1,11 +1,11 @@
 import sys
 
-def filter_sentences_with_words(input_stream):
+def filter_sentences_with_words():
     target_words = {"i", "oraz", "ale", "że", "lub"} 
-    #target_words = {"że"} 
     current_sentence = ""
+    filtered_sentences = []
     
-    for line in input_stream:
+    for line in sys.stdin:
         for char in line:
             current_sentence += char
             if char in ".!?":
@@ -13,9 +13,13 @@ def filter_sentences_with_words(input_stream):
                 count = sum(1 for word in words if word in target_words)
                 
                 if count >= 2: 
-                    print(current_sentence.strip())  
+                    filtered_sentences.append(current_sentence.strip())
                 
                 current_sentence = ""
 
+    return filtered_sentences
+
 if __name__ == "__main__":
-    filter_sentences_with_words(sys.stdin)
+    result = filter_sentences_with_words()
+    for sentence in result:
+        print(sentence)

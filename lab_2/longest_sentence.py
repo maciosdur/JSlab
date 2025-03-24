@@ -1,17 +1,18 @@
 import sys
 
-def longest_sentence(input_stream):
-    longest=""
-    current=""
+def longest_sentence():
+    longest = ""
+    current = ""
 
-    for line in input_stream:
+    for line in sys.stdin:
         for char in line:
-            current+= char
+            current += char
             if char in ".!?":
-                if len(current)>len(longest):
-                    longest=current
-                current=""
-    print(longest.strip())
+                if len(current) > len(longest):
+                    longest = current
+                current = ""
+    return longest.strip()
 
 if __name__ == "__main__":
-    longest_sentence(sys.stdin)
+    result = longest_sentence()
+    print(result)

@@ -1,16 +1,21 @@
 import sys
 
-def filter_questions_exclamations(input_stream):
+def filter_questions_exclamations():
     current_sentence = ""
+    filtered_sentences = []
 
-    for line in input_stream:
+    for line in sys.stdin:
         for char in line:
             current_sentence += char
             if char in "!?": 
-                print(current_sentence.strip())
+                filtered_sentences.append(current_sentence.strip())
                 current_sentence = ""  
             elif char == ".": 
                 current_sentence = ""
 
+    return filtered_sentences
+
 if __name__ == "__main__":
-    filter_questions_exclamations(sys.stdin)
+    result = filter_questions_exclamations()
+    for sentence in result:
+        print(sentence)

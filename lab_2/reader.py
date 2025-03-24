@@ -1,13 +1,13 @@
 import sys
 
-def clean_text(input_stream):
+def clean_text():
     preambula = True
     tresc = False
     empty_lines = 0
     checked_lines = 0
     buffer = []
 
-    for line in input_stream:
+    for line in sys.stdin:
         line = line.strip()
         checked_lines += 1
 
@@ -16,7 +16,7 @@ def clean_text(input_stream):
             
             if line == "":
                 empty_lines += 1
-                nextline = next(input_stream, None)
+                nextline = next(sys.stdin, None)
                 if nextline is not None:
                     nextline = nextline.strip()
                     buffer.append(nextline)
@@ -44,5 +44,5 @@ def clean_text(input_stream):
             yield saved_line
 
 if __name__ == "__main__":
-    for line in clean_text(sys.stdin):
+    for line in clean_text():
         print(line)

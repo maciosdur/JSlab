@@ -1,24 +1,25 @@
 import sys
 
-def proper_perc(input_stream):
+def proper_perc():
     proper = 0
-    sentence=0
-    big=0
+    sentence = 0
+    big = 0
 
-    for line in input_stream:
+    for line in sys.stdin:
         for char in line:
             if char in ".!?":
-                if big>1:
-                    proper+=1
-                sentence+=1
-                big=0
+                if big > 1:
+                    proper += 1
+                sentence += 1
+                big = 0
             elif 'A' <= char <= 'Z':
-                big+=1
+                big += 1
+
     if sentence > 0:
-        print(proper/sentence)
+        return proper / sentence
     else:
-        print("no sentences")
+        return "no sentences"
 
 if __name__ == "__main__":
-    proper_perc(sys.stdin)
-    
+    result = proper_perc()
+    print(result)
