@@ -19,7 +19,9 @@ def filter_sentences_with_words():
 
     return filtered_sentences
 
-if __name__ == "__main__":
+def main():
     result = filter_sentences_with_words()
     for sentence in result:
         print(sentence)
+if __name__ == "__main__":
+    main()
