@@ -4,69 +4,92 @@ from typing import List, Tuple
 
 def read_log() -> List[Tuple]:
     """
-    Reads HTTP logs from stdin and returns a list of tuples containing only the specified fields.
+    Reads HTTP logs from stdin with all available fields
     
     Returns:
-        List[Tuple]: A list of tuples, each containing:
-            - ts (datetime): Timestamp of the request
-            - uid (str): Unique session identifier
-            - id_orig_h (str): Client IP address
-            - id_orig_p (int): Client port
-            - id_resp_h (str): Server IP address
-            - id_resp_p (int): Server port
-            - method (str): HTTP method
-            - host (str): Server hostname
-            - uri (str): Requested URI
+        List[Tuple]: A list of tuples containing all log fields:
+            - ts (datetime)
+            - uid (str)
+            - id_orig_h (str)
+            - id_orig_p (int)
+            - id_resp_h (str)
+            - id_resp_p (int)
+            - trans_depth (int)
+            - method (str or None)
+            - host (str or None)
+            - uri (str or None)
+            - referrer (str or None)
+            - user_agent (str or None)
+            - request_body_len (int)
+            - response_body_len (int)
+            - status_code (int or None)
+            - status_msg (str or None)
+            - info_code (int or None)
+            - info_msg (str or None)
+            - tags (str or None)
+            - username (str or None)
+            - orig_fuids (str or None)
+            - orig_mime_types (str or None)
+            - resp_fuids (str or None)
+            - resp_mime_types (str or None)
     """
     log_entries = []
     
     for line in sys.stdin:
-        # Skip empty lines
         if not line.strip():
             continue
             
-        # Split the line into fields (tab-separated)
         fields = line.strip().split('\t')
         
         try:
-            # Convert timestamp from UNIX float to datetime
+            # Convert and validate required fields
             ts = datetime.datetime.fromtimestamp(float(fields[0]))
-            
-            # Extract only the specified fields
             uid = fields[1]
             id_orig_h = fields[2]
             id_orig_p = int(fields[3])
             id_resp_h = fields[4]
             id_resp_p = int(fields[5])
+            trans_depth = int(fields[6])
             
-            # Handle potentially missing fields (method, host, uri)
+            # Handle optional/missing fields
             method = fields[7] if len(fields) > 7 and fields[7] != '-' else None
             host = fields[8] if len(fields) > 8 and fields[8] != '-' else None
             uri = fields[9] if len(fields) > 9 and fields[9] != '-' else None
+            referrer = fields[10] if len(fields) > 10 and fields[10] != '-' else None
+            user_agent = fields[11] if len(fields) > 11 and fields[11] != '-' else None
             
-            # Create a tuple with only the specified fields
-            entry = (ts, uid, id_orig_h, id_orig_p, id_resp_h, id_resp_p, method, host, uri)
+            # Numeric fields
+            request_body_len = int(fields[12]) if len(fields) > 12 else 0
+            response_body_len = int(fields[13]) if len(fields) > 13 else 0
+            
+            # Status fields
+            status_code = int(float(fields[14])) if len(fields) > 14 and fields[14] != '-' else None
+            status_msg = fields[15] if len(fields) > 15 and fields[15] != '-' else None
+            
+            # Info fields
+            info_code = int(float(fields[16])) if len(fields) > 16 and fields[16] != '-' else None
+            info_msg = fields[17] if len(fields) > 17 and fields[17] != '-' else None
+            
+            # Tags and auth
+            tags = fields[19] if len(fields) > 19 and fields[19] != '-' else None
+            username = fields[20] if len(fields) > 20 and fields[20] != '-' else None
+            
+            # File and MIME types
+            orig_fuids = fields[23] if len(fields) > 23 and fields[23] not in ['-', '(empty)'] else None
+            orig_mime_types = fields[24] if len(fields) > 24 and fields[24] not in ['-', '(empty)'] else None
+            resp_fuids = fields[25] if len(fields) > 25 and fields[25] not in ['-', '(empty)'] else None
+            resp_mime_types = fields[26] if len(fields) > 26 and fields[26] not in ['-', '(empty)'] else None
+            
+            entry = (
+                ts, uid, id_orig_h, id_orig_p, id_resp_h, id_resp_p, trans_depth,
+                method, host, uri, referrer, user_agent, request_body_len,
+                response_body_len, status_code, status_msg, info_code, info_msg,
+                tags, username, orig_fuids, orig_mime_types, resp_fuids, resp_mime_types
+            )
             log_entries.append(entry)
             
         except (IndexError, ValueError) as e:
-            # Skip lines that don't match the expected format
             print(f"Skipping malformed line: {line.strip()} (Error: {str(e)})", file=sys.stderr)
             continue
     
     return log_entries
-
-if __name__ == "__main__":
-    # Example usage
-    logs = read_log()
-    print(f"Read {len(logs)} log entries")
-    if logs:
-        print("\nFirst entry:")
-        print(f"Timestamp: {logs[0][0]}")
-        print(f"UID: {logs[0][1]}")
-        print(f"Client IP: {logs[0][2]}")
-        print(f"Client Port: {logs[0][3]}")
-        print(f"Server IP: {logs[0][4]}")
-        print(f"Server Port: {logs[0][5]}")
-        print(f"Method: {logs[0][6]}")
-        print(f"Host: {logs[0][7]}")
-        print(f"URI: {logs[0][8]}")
